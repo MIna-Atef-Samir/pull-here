@@ -1,5 +1,8 @@
 let productsArray = [];
 let newArray = [];
+let productsPerPage = 5;
+let currentPage;
+let numberOfPages;
 
 window.onload = () => {
   fetchAll();
@@ -37,10 +40,14 @@ const renderElements = (products) => {
     );
 
     d1.append(txtNode);
-    d1.style.textAlign = "center";
     element.append(d1);
   } else {
-    for (let d of products) {
+    let paginationArray = applyPagination(products);
+    console.log("returned array from pagination");
+    console.log(paginationArray);
+    clearParent();
+
+    for (let d of paginationArray) {
       let d1 = document.createElement("div");
       d1.classList.add("col-lg-4", "col-md-6", "col-sm-6", "pb-1");
       d1.innerHTML =
@@ -59,6 +66,86 @@ const renderElements = (products) => {
         "</small></divclass=></div></div></div>";
       element.appendChild(d1);
     }
+  }
+};
+
+const clearPagination = () => {
+  const paginationParent = document.getElementById("pages");
+  paginationParent.innerHTML = "";
+};
+
+const applyPagination = (arr) => {
+  if (arr.length <= productsPerPage) {
+    if (!currentPage) {
+      numberOfPages = 1;
+      console.log(`Number of pages is ${numberOfPages}`);
+      currentPage = 1;
+      clearPagination();
+      addPagesButtons(numberOfPages);
+      return arr;
+    } else {
+      clearPagination();
+      addPagesButtons(numberOfPages);
+      return arr;
+    }
+  } else {
+    if (!currentPage) {
+      if (arr.length % productsPerPage === 0) {
+        numberOfPages = arr.length / productsPerPage;
+      } else {
+        const wholeNumber = parseInt(arr.length / productsPerPage);
+        numberOfPages = wholeNumber + 1;
+      }
+      currentPage = 1;
+      clearPagination();
+      addPagesButtons(numberOfPages);
+      return arr.slice(0, productsPerPage);
+    } else {
+      clearPagination();
+      addPagesButtons(numberOfPages);
+      return arr.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
+      );
+    }
+  }
+};
+
+const changePage = (triggerElement) => {
+  currentPage = +triggerElement.innerHTML;
+  renderElements(productsArray);
+};
+
+const setProductsPerPage = (triggerElement) => {
+  productsPerPage = +triggerElement.innerHTML;
+  if (productsArray.length % productsPerPage === 0) {
+    numberOfPages = productsArray.length / productsPerPage;
+  } else {
+    const wholeNumber = parseInt(productsArray.length / productsPerPage);
+    numberOfPages = wholeNumber + 1;
+  }
+  currentPage = 1;
+  renderElements(productsArray);
+};
+
+const addPagesButtons = (pagesNo) => {
+  const paginationParent = document.getElementById("pages");
+
+  for (let i = 0; i < pagesNo; i++) {
+    let btn = document.createElement("li");
+    if (i === currentPage - 1) {
+      btn.innerHTML =
+        '<li class="page-item active"><a onClick="changePage(this)" class="page-link" href="#">' +
+        (i + 1) +
+        "</a></li>";
+    } else {
+      btn.innerHTML =
+        '<li class="page-item"><a onClick="changePage(this)" class="page-link" href="#">' +
+        (i + 1) +
+        "</a></li>";
+    }
+
+    paginationParent.append(btn);
   }
 };
 
