@@ -48,23 +48,60 @@ const renderElements = (products) => {
     clearParent();
 
     for (let d of paginationArray) {
+      console.log(d);
       let d1 = document.createElement("div");
       d1.classList.add("col-lg-4", "col-md-6", "col-sm-6", "pb-1");
       d1.innerHTML =
-        '<div><div class="product-item bg-light mb-4"><div class="product-img position-relative overflow-hidden"><img class="img-fluid w-100" src=' +
-        d.image +
-        ' alt="' +
-        d.name +
-        '" /><div class="product-action"><a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a><a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a><a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a><a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a></div></div><div class="text-center py-4"><a class="h6 text-decoration-none text-truncate" href="">' +
-        d.name +
-        '</a><div class="d-flex align-items-center justify-content-center mt-2"><h5>$' +
-        d.price +
-        '</h5><h6 class="text-muted ml-2"><del>$' +
-        d.price +
-        '</del></h6></div><divclass="d-flex align-items-center justify-content-center mb-1"><small class="fa fa-star text-primary mr-1"></small><small class="fa fa-star text-primary mr-1"></small><small class="fa fa-star text-primary mr-1"></small><small class="fa fa-star text-primary mr-1"></small><small class="fa fa-star text-primary mr-1"></small><small>' +
-        d.rating_count +
-        "</small></divclass=></div></div></div>";
-      element.appendChild(d1);
+  `<div>
+    <div class="product-item bg-light mb-4">
+      <div class="product-img position-relative overflow-hidden">
+        <img class="img-fluid w-100" src="${d.image === 'assets/img/prod-2.jpg' ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJm2jE_qiZ1uBnSEZbBdut5N-l_MeZOj5OJc2tIgmgrQ&s' : d.image}" alt="${d.name}" />
+        <div class="product-action">
+          <a class="btn btn-outline-dark btn-square" onclick="addSingleProductToCart({id: ${d._id},name:'${d.name}',price:${d.price},image:'${d.image}'})">
+            <i class="fa fa-shopping-cart"></i>
+          </a>
+          <a class="btn btn-outline-dark btn-square" href="">
+            <i class="far fa-heart"></i>
+          </a>
+          <a class="btn btn-outline-dark btn-square" href="">
+            <i class="fa fa-sync-alt"></i>
+          </a>
+          <a class="btn btn-outline-dark btn-square" href="">
+            <i class="fa fa-search"></i>
+          </a>
+        </div>
+      </div>
+      <div class="text-center py-4">
+        <a class="h6 text-decoration-none text-truncate" href="">${d.name}</a>
+        <div class="d-flex align-items-center justify-content-center mt-2">
+          <h5>$${d.price - d.price * d.discount}</h5>
+          <h6 class="text-muted ml-2"><del>$${d.price}</del></h6>
+        </div>
+        <div class="d-flex align-items-center justify-content-center mb-1">
+          ${generateStarRating(d.rating)}
+          <small>${d.rating_count}</small>
+        </div>
+      </div>
+    </div>
+  </div>`;
+element.appendChild(d1);
+
+function generateStarRating(rating) {
+  let stars = '';
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating > Math.floor(rating);
+
+  for (let i = 0; i < fullStars; i++) {
+    stars += `<small class="fa fa-star text-primary mr-1"></small>`;
+  }
+
+  if (hasHalfStar) {
+    stars += `<small class="fa fa-star-half text-primary mr-1"></small>`;
+  }
+
+  return stars;
+}
+
     }
   }
 };
@@ -438,11 +475,10 @@ const bestRatingSortingProcess = (arr) => {
   console.log(arrayAfterSorting);
 
   // Remove repeated values form the array before starting working on it
-  arrayAfterSorting = arrayAfterSorting.filter(
-    (item, index) => arrayAfterSorting.indexOf(item) === index
-  );
+  arrayAfterSorting = arrayAfterSorting.filter((item, index) => arrayAfterSorting.indexOf(item) === index);
   console.log("After removing duplicates");
   console.log(arrayAfterSorting);
 
   return arrayAfterSorting;
 };
+
