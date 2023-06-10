@@ -15,39 +15,55 @@ class Cart {
   }
 
   addto_cart(product) {
-    const existingProduct = this.products.find(p => p._id === product._id);
-    if (existingProduct) {
-      existingProduct.quantity += 1;
+  const existingProduct = this.products.find(p => p.name === product.name);
+
+  if (existingProduct) {
+    existingProduct.quantity += 1;
+  } else {
+    product.quantity = 1;
+    this.products.push(product);
+  }
+
+  localStorage.setItem('products', JSON.stringify(this.products));
+  console.log(this.products);
+  this.renderTable();
+}
+
+  
+
+decreaseQuantity(productId) {
+  const product = this.products.find(p => p.name === productId);
+  if (product) {
+    if (product.quantity > 1) {
+      product.quantity -= 1;
     } else {
-      product.quantity = 1;
-      this.products.push(product);
+      // Remove the product from the cart if the quantity becomes zero
+      const productIndex = this.products.findIndex(p => p.name === productId);
+      if (productIndex !== -1) {
+        this.products.splice(productIndex, 1);
+      }
     }
     localStorage.setItem('products', JSON.stringify(this.products));
-    console.log(this.products);
+    this.renderTable();
+
+    // Disable the decrease button if the quantity is 1
+    const decreaseBtn = document.querySelector(`.decBtn[data-id="${productId}"]`);
+    if (decreaseBtn) {
+      decreaseBtn.disabled = product.quantity === 1;
+    }
+  }
+}
+
+increaseQuantity(productId) {
+  const product = this.products.find(p => p.name === productId);
+  console.log(productId);
+  if (product) {
+    product.quantity += 1;
+    localStorage.setItem('products', JSON.stringify(this.products));
     this.renderTable();
   }
+}
 
-  decreaseQuantity(productId) {
-    const product = this.products.find(p => p._id === productId);
-    if (product) {
-      if (product.quantity > 1) {
-        product.quantity -= 1;
-      } else {
-        document.getElementById('decrease').disabled = true;
-      }
-      localStorage.setItem('products', JSON.stringify(this.products));
-      this.renderTable();
-    }
-  }
-
-  increaseQuantity(productId) {
-    const product = this.products.find(p => p._id === productId);
-    if (product) {
-      product.quantity += 1;
-      localStorage.setItem('products', JSON.stringify(this.products));
-      this.renderTable();
-    }
-  }
 
   deleteItem(id) {
     const productIndex = this.products.findIndex(p => p._id === id);
@@ -76,20 +92,20 @@ class Cart {
       Tproducts.innerHTML +=
         `<tr>
           <td class="align-middle">
-            <img src="${product.image && 'https://www.shutterstock.com/image-vector/default-image-icon-vector-missing-260nw-2086941550.jpg'}" alt="" style="width: 50px" />
+            <img src="${product.image || 'https://www.shutterstock.com/image-vector/default-image-icon-vector-missing-260nw-2086941550.jpg'}" alt="" style="width: 50px" />
             ${product.name}
           </td>
           <td class="align-middle">$${product.price}</td>
           <td class="align-middle">
             <div class="input-group quantity mx-auto" style="width: 100px">
               <div class="input-group-btn">
-                <button type="button" class="decBtn btn btn-sm btn-primary btn-minus" onclick="cart.decreaseQuantity(${product._id})" ${product.quantity === 1 ? 'disabled' : ''}>
+                <button type="button" class="decBtn btn btn-sm btn-primary btn-minus" onclick="cart.decreaseQuantity('${product.name}')"${product.quantity === 1 ? 'disabled' : ''}>
                   <i class="fa fa-minus"></i>
                 </button>
               </div>
               <span class="quantityVal form-control form-control-sm bg-secondary border-0 text-center" id="quantity${product._id}">${product.quantity}</span>
               <div class="input-group-btn">
-                <button type="button" class="incBtn btn btn-sm btn-primary btn-plus" onclick="cart.increaseQuantity(${product._id})">
+                <button type="button" class="incBtn btn btn-sm btn-primary btn-plus" onclick="cart.increaseQuantity('${product.name}')">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>

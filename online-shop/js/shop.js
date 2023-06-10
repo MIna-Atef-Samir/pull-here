@@ -48,7 +48,7 @@ const renderElements = (products) => {
     clearParent();
 
     for (let d of paginationArray) {
-      console.log(d);
+      console.log(d._id);
       let d1 = document.createElement("div");
       d1.classList.add("col-lg-4", "col-md-6", "col-sm-6", "pb-1");
       d1.innerHTML =
@@ -57,7 +57,7 @@ const renderElements = (products) => {
       <div class="product-img position-relative overflow-hidden">
         <img class="img-fluid w-100" src="${d.image === 'assets/img/prod-2.jpg' ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJm2jE_qiZ1uBnSEZbBdut5N-l_MeZOj5OJc2tIgmgrQ&s' : d.image}" alt="${d.name}" />
         <div class="product-action">
-          <a class="btn btn-outline-dark btn-square" onclick="addSingleProductToCart({id: ${d._id},name:'${d.name}',price:${d.price},image:'${d.image}'})">
+          <a class="btn btn-outline-dark btn-square" onclick='addSingleProductToCart({id:"${d._id}", name:"${d.name}" ,price:${d.price},image:"${d.image}"})'>
             <i class="fa fa-shopping-cart"></i>
           </a>
           <a class="btn btn-outline-dark btn-square" href="">
