@@ -45,12 +45,6 @@ decreaseQuantity(productId) {
     }
     localStorage.setItem('products', JSON.stringify(this.products));
     this.renderTable();
-
-    // Disable the decrease button if the quantity is 1
-    const decreaseBtn = document.querySelector(`.decBtn[data-id="${productId}"]`);
-    if (decreaseBtn) {
-      decreaseBtn.disabled = product.quantity === 1;
-    }
   }
 }
 
@@ -93,7 +87,7 @@ increaseQuantity(productId) {
         `<tr>
           <td class="align-middle">
             <img src="${product.image || 'https://www.shutterstock.com/image-vector/default-image-icon-vector-missing-260nw-2086941550.jpg'}" alt="" style="width: 50px" />
-            ${product.name}
+            ${product.name == "LG TVs"? "LG TV's" : product.name}
           </td>
           <td class="align-middle">$${product.price}</td>
           <td class="align-middle">
